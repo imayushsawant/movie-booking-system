@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - ChaiCode Cinema</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap");
+
+        body {
+            font-family: "Outfit", sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div
+        class="w-full max-w-md bg-slate-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-10 border border-slate-700/50">
+
+        <h1
+            class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+            Register
+        </h1>
+
+        <form id="registerForm" class="flex flex-col gap-6">
+
+            <input name="first_name" type="text" placeholder="First Name"
+                class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+
+            <input name="last_name" type="text" placeholder="Last Name"
+                class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+
+            <input name="email" type="email" placeholder="Email"
+                class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+
+            <input name="password" type="password" placeholder="Password"
+                class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+
+            <button type="submit"
+                class="mt-4 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 transition-all font-semibold shadow-lg">
+                Register
+            </button>
+
+        </form>
+
+        <p class="text-center text-slate-400 mt-6">
+            Already have an account?
+            <a href="/login.html" class="text-emerald-400 hover:underline">Login</a>
+        </p>
+
+    </div>
+    <script>
+        const form = document.getElementById("registerForm")
+        console.log("SCRIPT LOADED");
+        form.onsubmit = async (e) => {
+            e.preventDefault()
+            console.log("SUBMIT TRIGGERED");
+            const first_name = form.first_name.value;
+            const last_name = form.last_name.value;
+            const email = form.email.value;
+            const password = form.password.value;
+
+            const res = await fetch("/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        first_name,
+                        last_name,
+                        email,
+                        password
+                    })
+                }
+            )
+            const data = await res.json();
+            console.log(data);
+            if (!res.ok) {
+                alert(data.error || "Validation failed");
+                return;
+            }
+            console.log("SUBMIT TRIGGERED");
+            if (res.ok) {
+                localStorage.setItem("access_token", data.access_token);
+                window.location.href = "./index.html";
+            }
+            form.reset();
+        }
+    </script>
+</body>
+
+</html>
