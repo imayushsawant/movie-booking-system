@@ -55,6 +55,7 @@
 
     </div>
     <script>
+        const API_URL = "https://movie-booking-system-amac.onrender.com/";
         const form = document.getElementById("registerForm")
         console.log("SCRIPT LOADED");
         form.onsubmit = async (e) => {
@@ -65,7 +66,7 @@
             const email = form.email.value;
             const password = form.password.value;
 
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/register`,
+            const res = await fetch(`${API_URL}/register`,
                 {
                     method: "POST",
                     headers: {
