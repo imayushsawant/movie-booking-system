@@ -33,6 +33,48 @@ const pool = new pg.Pool({
   },
 });
 
+const initDB = async () => {
+  try {
+    // Create tables
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS seats (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255),
+        isbooked INT DEFAULT 0
+      );
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        first_name VARCHAR(50),
+        last_name VARCHAR(50),
+        email VARCHAR(255) UNIQUE,
+        password VARCHAR(255)
+      );
+    `);
+
+    // Check if seats already exist
+    const result = await pool.query(`SELECT COUNT(*) FROM seats`);
+    const count = parseInt(result.rows[0].count);
+
+    // Insert only if empty
+    if (count === 0) {
+      await pool.query(`
+        INSERT INTO seats (name, isbooked)
+        SELECT 'Seat ' || generate_series(1, 20), 0;
+      `);
+      console.log("Inserted 20 seats");
+    } else {
+      console.log("Seats already exist, skipping insert");
+    }
+
+  } catch (err) {
+    console.error("DB init failed:", err);
+  }
+};
+
+
 const app = new express();
 
 app.use(express.json());
@@ -200,4 +242,6 @@ app.put("/:id/", authenticate, async (req, res) => {
   }
 });
 
-app.listen(port, () => console.log("Server starting on port: " + port));
+initDB().then(() => {
+  app.listen(port, () => console.log("Server running on port: " + port));
+});
