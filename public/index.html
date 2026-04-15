@@ -57,12 +57,13 @@
   </div>
 
   <script>
+    const API_URL = "https://movie-booking-system-amac.onrender.com";
     async function run() {
       const token = localStorage.getItem("access_token");
       console.log(token)
 
 
-      const userRes = await fetch("${import.meta.env.VITE_API_URL}/get-me", {
+      const userRes = await fetch(`${API_URL}/get-me`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -72,7 +73,7 @@
 
 
       const tbl = document.getElementById("tbl");
-      const res = await fetch("${import.meta.env.VITE_API_URL}/seats");
+      const res = await fetch(`${API_URL}/seats`);
       const resarray = await res.json();
       const j = resarray.sort((a, b) => a.id - b.id);
       let tr;
@@ -117,7 +118,7 @@
 
           try {
             const id = j[i].id; // Safe from loop closure
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/${id}`, { method: "PUT", headers: { Authorization: `Bearer ${token}` } });
+            const res = await fetch(`${API_URL}/${id}`, { method: "PUT", headers: { Authorization: `Bearer ${token}` } });
             const data = await res.json();
             console.log("STATUS:", res.status);
             console.log("DATA:", data);
